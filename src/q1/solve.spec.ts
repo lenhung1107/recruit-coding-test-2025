@@ -174,4 +174,41 @@ describe('Q1 solve', () => {
       expect(solve(bad)).toBe('不正な入力です');
     }
   });
+  it.skip('[C9] Child: 終了1:59まではOK', () => {
+    const out = solve('Child,G,14:59,1:00,I-1'); //
+    expect(out).toBe('800円');
+  });
+
+  it.skip('[C9] Young: 終了17:59まではOK', () => {
+    const out = solve('Young,G,16:59,1:00,A-1');
+    expect(out).toBe('1200円');
+  });
+
+  //OK/NGが混在する複数行を入力する場合
+  it('[C11] 3枚中1枚NG → 全体不可でNG理由だけ出る', () => {
+    const input = [
+      'Adult,G,10:00,1:00,A-1', // OK
+      'Young,G,10:00,1:00,A-2', // OK
+      'Child,G,10:00,1:00,J-5', // NG 座席NG
+    ].join('\n');
+    const out = solve(input);
+    expect(out).toBe('対象のチケットではその座席をご利用いただけません');
+  });
+
+  //重複した理由
+  it('[C12] 同じ理由が重複しない（uniqueStable動作確認）', () => {
+    const out = solve('Child,R18+,10:00,1:00,J-1');
+    expect(out.split(',')).toHaveLength(2);
+  });
+
+  //入力に余分な空白/改行が含まれています
+  it('[C13] 入力に余分な空白や空行があっても動作する', () => {
+    const input = `
+    Adult , G , 10:00 , 1:00 , A-1
+
+    Child , G , 10:00 , 1:00 , I-2
+  `;
+    const out = solve(input);
+    expect(out).toBe(['1800円', '800円'].join('\n'));
+  });
 });
